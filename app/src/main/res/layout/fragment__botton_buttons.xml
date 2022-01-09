@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragment.Fragment_BottonButtons">
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:layout_width="206dp"
+            android:layout_height="match_parent">
+
+            <ImageButton
+                android:id="@+id/train_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/blue"
+                android:src="@drawable/train_50" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="206dp"
+            android:layout_height="match_parent">
+
+            <ImageButton
+                android:id="@+id/profile_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/blue"
+                android:src="@drawable/profile_50" />
+        </FrameLayout>
+    </LinearLayout>
+
+</FrameLayout>
