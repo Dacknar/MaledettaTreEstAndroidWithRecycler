@@ -20,6 +20,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Post {
     int ritardo, stato;
@@ -96,18 +99,39 @@ public class Post {
         if(ritardo==-1){
             return "Ritardo: nessun valore";
         }
-        return "Ritardo: "+ritardo;
+        switch (ritardo){
+            case 0:
+                return "Ritardo: In orario";
+            case 1:
+                return "Ritardo: Ritardo di pochi minuti";
+            case 2:
+                return "Ritardo: Ritardo oltre i 15 minuti";
+            case 3:
+                return "Ritardo: Treni soppressi";
+            default:
+                return "Ritardo: Non specificato";
+        }
+
     }
 
     public String getStato() {
         if(stato==-1){
             return "Stato: nessun valore";
         }
-        return "Stato: "+String.valueOf(stato);
+        switch (stato){
+            case 0:
+                return "Stato: Situazione ideale";
+            case 1:
+                return "Stato: Accettabile";
+            case 2:
+                return "Stato: Gravi problemi";
+            default:
+                return "Stato: Non specificato";
+        }
     }
 
     public String getCommento() {
-        if(commento==""){
+        if(commento.equals("")){
             return "nessun commento";
         }
         return commento;
@@ -126,7 +150,15 @@ public class Post {
     }
 
     public String getDataPubblicazione() {
-        return dataPubblicazione;
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            Date date = format.parse(dataPubblicazione);
+            String updatedMinute = date.getMinutes() < 10 ? "0" + date.getMinutes() : "" + date.getMinutes();
+            return "Pubblicato il: " + (date.getDay() + 2) + "/" +(date.getMonth() +1 ) + "/" +(date.getYear() - 100) + " alle ore: "+date.getHours()+":"+updatedMinute;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 
     public Boolean getFollowingAuthor() {

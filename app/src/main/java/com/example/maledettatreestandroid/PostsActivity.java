@@ -2,6 +2,8 @@ package com.example.maledettatreestandroid;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -28,7 +30,7 @@ public class PostsActivity extends AppCompatActivity {
     FragmentManager manager;
     Linee linee;
     Context context;
-    ListView lista_di_posts;
+    RecyclerView lista_di_posts;
     ArrayList<Post> posts_seguiti=new ArrayList<>();
     ArrayList<Post> posts_non_seguiti=new ArrayList<>();
     TextView title, direzione;
@@ -97,8 +99,11 @@ public class PostsActivity extends AppCompatActivity {
             direzione.setText("Direzione "+direzione2.getNome());
         }
 
-        PostAdapter postAdapter=new PostAdapter(getApplicationContext(), posts_seguiti, posts_non_seguiti);
-        lista_di_posts.setAdapter(postAdapter);
+        //PostAdapter postAdapter= new PostAdapter(getApplicationContext(), posts_seguiti, posts_non_seguiti);
+        PostRecyclerAdapter adapter = new PostRecyclerAdapter(getApplicationContext(), posts_seguiti, posts_non_seguiti);
+        //lista_di_posts.setAdapter(postAdapter);
+        lista_di_posts.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        lista_di_posts.setAdapter(adapter);
     }
 
     public void setMap(){

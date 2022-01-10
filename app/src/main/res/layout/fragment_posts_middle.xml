@@ -71,7 +71,7 @@
             android:src="@drawable/delete"
             android:translationZ="10dp" />
 
-        <ListView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/lista_di_post"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

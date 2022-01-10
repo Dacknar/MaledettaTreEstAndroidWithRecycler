@@ -6,6 +6,8 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.ConditionVariable;
 import android.os.Handler;
@@ -25,6 +27,7 @@ import com.example.maledettatreestandroid.Linea;
 import com.example.maledettatreestandroid.Linee;
 import com.example.maledettatreestandroid.Post;
 import com.example.maledettatreestandroid.PostAdapter;
+import com.example.maledettatreestandroid.PostRecyclerAdapter;
 import com.example.maledettatreestandroid.R;
 
 import java.util.ArrayList;
@@ -33,7 +36,7 @@ public class Posts_Fragment_Middle extends Fragment {
     Context context;
     FragmentManager manager;
     Linee linee;
-    ListView lista_di_posts;
+    RecyclerView lista_di_posts;
     ArrayList<Post> posts_seguiti=new ArrayList<>();
     ArrayList<Post> posts_non_seguiti=new ArrayList<>();
     TextView title, direzione;
@@ -109,8 +112,11 @@ public class Posts_Fragment_Middle extends Fragment {
                 direzione.setText("Direzione "+direzione2.getNome());
             }
 
-            PostAdapter postAdapter=new PostAdapter(context, posts_seguiti, posts_non_seguiti);
-            lista_di_posts.setAdapter(postAdapter);
+            //PostAdapter postAdapter= new PostAdapter(getApplicationContext(), posts_seguiti, posts_non_seguiti);
+            PostRecyclerAdapter adapter = new PostRecyclerAdapter(getContext(), posts_seguiti, posts_non_seguiti);
+            //lista_di_posts.setAdapter(postAdapter);
+            lista_di_posts.setLayoutManager(new LinearLayoutManager(getContext()));
+            lista_di_posts.setAdapter(adapter);
         }
     }
 
