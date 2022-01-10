@@ -111,7 +111,7 @@ public class Profile_Fragment_Middle extends Fragment {
             registraUtente();
         });*/
 
-        image_profile.setOnLongClickListener((View.OnLongClickListener) view12 -> {
+        image_profile.setOnClickListener((View.OnClickListener) view12 -> {
             Log.d("PICTURE", "image pressed");
 
             if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
@@ -124,8 +124,6 @@ public class Profile_Fragment_Middle extends Fragment {
             } else {
                 pickImageFromGallery();
             }
-
-            return false;
         });
 
         return view;
@@ -171,18 +169,21 @@ public class Profile_Fragment_Middle extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode==activity.RESULT_OK&&requestCode==IMAGE_PICK_CODE){
             Uri imageUri=data.getData();
-            Bitmap bitmap = null;
+            Log.d("ProfileFragment", "URI IS : " + imageUri);
             String newImage=null;
             try {
-                bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), imageUri);
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), imageUri);
+                Log.d("ProfileFragment", "The BITMAP IS : " + bitmap);
                 Bitmap resizedImage = getResizedBitmap(bitmap, 230);
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 resizedImage.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
                 byte[] byteArray = byteArrayOutputStream.toByteArray();
                 newImage = Base64.encodeToString(byteArray, Base64.DEFAULT);
+                image_profile.setImageBitmap(bitmap);
                 profile.setFoto(newImage);
-                registraUtente();
+                registraUtente(newImage);
             } catch (IOException e) {
+                Log.d("ProfileFragment", "ERROR Occured: " + e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -204,24 +205,26 @@ public class Profile_Fragment_Middle extends Fragment {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, response -> {
             try {
                 profile.setUid(response.getString("uid"));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            try {
                 profile.setNome(response.getString("name"));
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
             try {
                 Log.d("PROFILE", "FOTOO " + decodeImage(response.getString("picture")));
                 profile.setFoto(response.getString("picture"));
-                image_profile.setImageBitmap(decodeImage(response.getString("picture")));
+                //Log.d("ProfileFragment", "The image is : " + response.getString("picture"));
+                Bitmap decodedImage = decodeImage(response.getString("picture"));
+                if(decodedImage != null){
+                    image_profile.setImageBitmap(decodedImage);
+                }else{
+                    profile.setFoto(BitmapFactory.decodeResource(context.getResources(), R.drawable.no_foto));
+                    image_profile.setImageDrawable(getResources().getDrawable(R.drawable.no_foto));
+                }
                 Log.d("fotoo", "foto"+profile.getFoto());
                 //TODO: DECODE
             } catch (Exception e) {
                 Log.d("PROFILE", "no foto");
-                profile.setFoto(BitmapFactory.decodeResource(context.getResources(), R.drawable.no_foto));
-                image_profile.setImageDrawable(getResources().getDrawable(R.drawable.no_foto));
                 e.printStackTrace();
             }
             //image_profile.setImageBitmap(profile.getFoto());
@@ -234,7 +237,7 @@ public class Profile_Fragment_Middle extends Fragment {
         queue.add(jsonObjectRequest);
     }
 
-    public void registraUtente(){
+    public void registraUtente(String base64StringImage){
         Log.d("TAG", "registraUtente");
 
         RequestQueue queue = Volley.newRequestQueue(context);
@@ -244,24 +247,23 @@ public class Profile_Fragment_Middle extends Fragment {
 
         try {
             if(profile.getFoto()==null){
-                jsonObject.put("sid", sid);
-                jsonObject.put("name", profile.getNome());
                 jsonObject.put("picture", encodeImage(BitmapFactory.decodeResource(context.getResources(), R.drawable.no_foto)));
             } else {
-                jsonObject.put("sid", sid);
-                jsonObject.put("name", profile.getNome());
-                jsonObject.put("picture", profile.getFoto());
+                jsonObject.put("picture", base64StringImage);
             }
+            jsonObject.put("sid", sid);
+            jsonObject.put("name", profile.getNome());
         } catch (JSONException e) {
             e.printStackTrace();
         }
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, response -> {
             try {
+                Log.d("ProfileFragment", ": Image Uploaded");
                 modify.setText("Modificato");
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }, error -> Log.d("TAG", "ERROR: " + error.toString()));
+        }, error -> Log.d("ProfileFragment", "ERROR: " + error.toString()));
         queue.add(jsonObjectRequest);
     }
 
